@@ -27,7 +27,9 @@ class TwoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.twoTV.setOnClickListener {
-            findNavController().navigate(R.id.oneFragment)
+            //findNavController().navigate(R.id.oneFragment)
+            //findNavController().popBackStack()
+            findNavController().navigateUp()
         }
     }
 }
