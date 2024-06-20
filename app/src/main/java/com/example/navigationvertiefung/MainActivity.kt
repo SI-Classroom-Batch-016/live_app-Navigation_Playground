@@ -2,6 +2,7 @@ package com.example.navigationvertiefung
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -36,7 +37,17 @@ class MainActivity : AppCompatActivity() {
         //Listener der bei jeder Navigation ausgeführt
         navController.addOnDestinationChangedListener { navController: NavController, navDestination: NavDestination, bundle: Bundle? ->
 
-            when (navDestination.id) {
+            if (navController.currentDestination!!.id == R.id.detailFragment) {
+                binding.bottomNavView.visibility = View.GONE
+            } else {
+                binding.bottomNavView.visibility = View.VISIBLE
+            }
+        }
+
+        //Listener der bei BottomNavigation Klick ausgeführt
+        binding.bottomNavView.setOnItemSelectedListener { menuItem ->
+
+            when (menuItem.itemId) {
                 //Entfernt alle Destinations vom Stack bis zum ersten Destination mit der angegebenen id
                 R.id.homeFragment -> {
                     navController.popBackStack(R.id.nav_graph, false)
@@ -48,14 +59,6 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(R.id.listFragment)
                 }
             }
-        }
-
-        //Listener der bei BottomNavigation Klick ausgeführt
-        binding.bottomNavView.setOnItemSelectedListener { menuItem ->
-
-            //Rufe die Funktion auf die standardmäßig für die bottom navigation zuständig ist.
-            NavigationUI.onNavDestinationSelected(menuItem, navController)
-            navController.popBackStack(menuItem.itemId, false)
             true
         }
 
