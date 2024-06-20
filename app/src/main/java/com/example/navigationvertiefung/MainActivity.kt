@@ -1,17 +1,13 @@
 package com.example.navigationvertiefung
 
-import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.OnBackPressedDispatcher
-import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
@@ -34,22 +30,25 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavView.setupWithNavController(navController)
 
         binding.navFAB.setOnClickListener {
-
             logBackStack(navController)
         }
 
         //Listener der bei jeder Navigation ausgeführt
-//        navController.addOnDestinationChangedListener{ navController: NavController, navDestination: NavDestination, bundle: Bundle? ->
-//
-//            logBackStack(navController)
-//            Log.d("navDestination", navDestination.label.toString())
-//
-//            when(navDestination.id){
-//                //Entfernt alle Destinations vom Stack bis zum ersten Destination mit der angegebenen id
-//                R.id.homeFragment -> navController.popBackStack(R.id.homeFragment, false)
-//                R.id.listFragment -> navController.popBackStack(R.id.listFragment, false)
-//            }
-//        }
+        navController.addOnDestinationChangedListener { navController: NavController, navDestination: NavDestination, bundle: Bundle? ->
+
+            when (navDestination.id) {
+                //Entfernt alle Destinations vom Stack bis zum ersten Destination mit der angegebenen id
+                R.id.homeFragment -> {
+                    navController.popBackStack(R.id.nav_graph, false)
+                    navController.navigate(R.id.homeFragment)
+                }
+
+                R.id.listFragment -> {
+                    navController.popBackStack(R.id.nav_graph, false)
+                    navController.navigate(R.id.listFragment)
+                }
+            }
+        }
 
         //Listener der bei BottomNavigation Klick ausgeführt
         binding.bottomNavView.setOnItemSelectedListener { menuItem ->
@@ -57,39 +56,27 @@ class MainActivity : AppCompatActivity() {
             //Rufe die Funktion auf die standardmäßig für die bottom navigation zuständig ist.
             NavigationUI.onNavDestinationSelected(menuItem, navController)
             navController.popBackStack(menuItem.itemId, false)
-
             true
         }
 
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-
-
                 if (navController.currentDestination?.id == R.id.homeFragment ||
-                    navController.currentDestination?.id == R.id.listFragment) {
-
-
-                    val builder = AlertDialog.Builder(this@MainActivity)
-                    builder.setTitle("Bitte Bestätigen")
-
-                    builder.setPositiveButton("Ja") { _, _ ->
-                        finish()
-                    }
-
-                    builder.setNegativeButton("Nein") { _, _ ->
-
-                    }
-
-                    builder.show()
+                    navController.currentDestination?.id == R.id.listFragment
+                ) {
+                    AlertDialog.Builder(this@MainActivity)
+                        .setTitle("Bitte Bestätigen")
+                        .setPositiveButton("Ja") { _, _ ->
+                            finish()
+                        }
+                        .setNegativeButton("Nein") { _, _ -> }
+                        .show()
                 } else {
                     navController.navigateUp()
                 }
-
             }
-
         })
-
     }
 
 
